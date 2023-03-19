@@ -18,6 +18,9 @@ use App\Http\Resources\PaymentResource;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::post('/test', function(){
+    return response()->json('OK', 201);
+});
 Route::middleware(['auth:sanctum'])->group(function () {
     // Normally I would work via a controller, but since checkout
     // is a single action and while there are no other api actions

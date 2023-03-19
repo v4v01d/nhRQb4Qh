@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
+            // Also needs a reference to User or Cart.
             // Should be provided by the resource used for processing the payment.
             $table->string('transaction_id')->unique();
             // Woe won't be allowed to add new values to this field, hence string, not enum.
