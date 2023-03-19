@@ -212,4 +212,16 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
     ])->toArray(),
 
+    'payment_methods' => [
+        'bank_card' => [
+            'endpoint' => 'https://e-fresh.herokuapp.com/api/bank-pay',
+            'http-method' => 'POST',
+            'api-key' => 'iOiIxMjM0NTY'
+        ],
+        'paypal' => [
+            'endpoint' => 'https://e-fresh.herokuapp.com/api/paypal-pay',
+            'http-method' => 'POST',
+            'api-key' => 'iOiIxMjM0NTY'
+        ],
+    ],
 ];

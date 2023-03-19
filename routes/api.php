@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Requests\CheckoutRequest;
+use App\Services\PaymentMethodResolver as PMResolver;
+use Illuminate\Support\Facades\Log;
+use App\Repositories\PaymentRepo;
+use App\Http\Resources\PaymentResource;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +23,28 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // is a single action and while there are no other api actions
     // provided, I will stick to closure approach.
     Route::post('/checkout', function(CheckoutRequest $request){
-        // Do stuff...
+        try{
+            $paymentMethod = PMResolver::ResolveFromHTTP($request);
+        }catch(\Exception $e){
+            Log::critical($e->getMessage());
+            return response()
+            ->json([
+                'errors'=>[
+                    'Service is temporarily unavailable. Please try again later.'
+                ]
+            ], 500);
+        }
+        $paymentMethod->Execute();
+        if($paymentMethod->GetTransactionID() === NULL){
+            return response()
+            ->json([
+                'errors'=>$paymentMethod->GetErrors(),
+            ], $paymentMethod->GetStatusCode());
+        }
+        // Persist.
+        $paymentModel = PaymentRepo::Create($paymentMethod);
+        // Ideally an HTTP Resource containing the resulting Order should be returned.
         // TMP response.
-        return response()->json([], 201);
+        return new PaymentResource($paymentModel);
     });
 });
